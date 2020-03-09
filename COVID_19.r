@@ -84,8 +84,15 @@ test_19_covid_Confirmed_bar$Type<-'Confirmed'
 test_19_covid_Recovered_bar$Type<-'Recovered'
 test_19_covid_Deaths_bar$Type<-'Deaths'
 
-all_19_covid_bar<-rbind(test_19_covid_Confirmed_bar,test_19_covid_Recovered_bar,test_19_covid_Deaths_bar)
+test_19_covid_Active_bar<-all_19_covid[,c(1:5,12,7)]
+test_19_covid_Active_bar$Type<-'Active'
 
+names(test_19_covid_Active_bar)[6]<-"Headcount"
+names(test_19_covid_Active_bar)[7]<-"date"
+
+#all_19_covid_bar<-rbind(test_19_covid_Confirmed_bar,test_19_covid_Recovered_bar,test_19_covid_Deaths_bar,test_19_covid_Active_bar)
+
+all_19_covid_bar<-rbind(test_19_covid_Active_bar,test_19_covid_Recovered_bar,test_19_covid_Deaths_bar)
 
 
 
@@ -172,9 +179,63 @@ qualitative<-c(
 ,"#4daf4a"
 )
 
-gg <-ggplot(data = all_19_covid_bar, aes(x = as.Date(date), y = Headcount,fill=Type)) 
-gg <-gg+ geom_bar(stat = "identity")+scale_fill_manual(values=qualitative)+theme_tufte(ticks = FALSE)+scale_x_date(breaks = '1 week')
-gg <-gg+ggtitle("Cumulative COVID-19 number") + xlab("Number of People") + ylab("Date")
-gg
+gg2 <-ggplot(data = all_19_covid_bar, aes(x = as.Date(date), y = Headcount,fill=Type)) 
+gg2 <-gg2+ geom_bar(stat = "identity", position = 'stack'#， position = 'dodge'
+	)+scale_fill_manual(values=qualitative)+theme_tufte(ticks = FALSE)+scale_x_date(breaks = '1 week')
+gg2 <-gg2+ggtitle("Cumulative COVID-19 number") + xlab("Date") + ylab("Number of People")
+gg2+theme_set(theme_bw())
+gg2
 #+ scale_fill_brewer(palette = sequential)
+
+
+
+
+
+
+
+all_19_covid_line<-all_19_covid %>%
+  group_by(date) %>%
+  summarise_at(vars(Headcount_Recovered,Headcount_active,Headcount_Confirmed,Headcount_Deaths),funs(sum(.,na.rm=TRUE)))
+
+
+ggplot(all_19_covid_line, aes(x=as.Date(date))) + 
+  geom_line(aes(y=Headcount_Recovered, col="Recovered"), size = 2) + 
+  geom_line(aes(y=Headcount_active, col="Active"), size = 2) +
+  geom_line(aes(y=Headcount_Confirmed, col="_Confirmed"), size = 1) + 
+  geom_line(aes(y=Headcount_Deaths, col="Deaths"), size = 1) +
+  scale_x_date(breaks = '1 week') +  
+  scale_color_manual(name="", 
+                     values = c("#e82507", "#E7B800","#0a0a0a","#22d606")) 
+  theme(panel.grid.minor = element_blank()) 
+
+
+
+
+
+all_19_covid_line_china<-all_19_covid %>%
+  group_by(date) %>%
+  filter(Country.Region =="Mainland China") %>%
+  summarise_at(vars(Headcount_Recovered,Headcount_active,Headcount_Confirmed,Headcount_Deaths),funs(sum(.,na.rm=TRUE)))
+
+
+all_19_covid_line_nonchina<-all_19_covid %>%
+  group_by(date) %>%
+  filter(Country.Region !="Mainland China") %>%
+  summarise_at(vars(Headcount_Recovered,Headcount_active,Headcount_Confirmed,Headcount_Deaths),funs(sum(.,na.rm=TRUE)))
+
+all_19_covid_line2<-merge(all_19_covid_line_china,all_19_covid_line_nonchina,by=c("date"))
+names(all_19_covid_line2)[2:3]<-c("Confirmed_china","Confirmed_outsidechina")
+all_19_covid_line2<-merge(all_19_covid_line[,c(1:3)],all_19_covid_line2,by=c("date"))
+
+
+
+ggplot(all_19_covid_line2, aes(x=as.Date(date))) + 
+  geom_line(aes(y=Confirmed_china, col="Total Confirmed Mainland China"), size = 1.5) + 
+  geom_line(aes(y=Confirmed_outsidechina, col="Total Confirmed Outside Mainland China"), size = 1.5) +
+  geom_line(aes(y=Headcount_active, col="Active Worldwide"), size = 1.5) +
+  geom_line(aes(y=Headcount_Recovered, col="Total Recovered Worldwide"), size = 1.5) + 
+  scale_x_date(breaks = '1 week') +  
+  scale_color_manual(name="", 
+                     values = brewer.pal(4, "PRGn")) 
+theme(panel.grid.minor = element_blank()) 
 
