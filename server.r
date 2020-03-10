@@ -36,8 +36,13 @@ library(dplyr)
 library(repmis)
 library(scatterpie)
 library(RColorBrewer)
+library(shiny.i18n)
 
+  
+i18n <- Translator$new(translation_json_path = "./translation.json")
+i18n$set_translation_language("cn")
 
+  
 test_19_covid_Confirmed<-reshape2::melt(time_series_19_covid_Confirmed,id.vars=c("Province.State","Country.Region","Lat","Long"),
                                                   variable.name = "Calendar_Date"
                                                   ,value.name = "Headcount_Confirmed"
@@ -157,7 +162,7 @@ output$test <- renderPlot({
                               alpha = 0.5) +
     scale_fill_manual(
       breaks = c("Headcount_active","Headcount_Recovered", "Headcount_Deaths"),
-      labels = c("Active","Recovered", "Deaths"),
+      labels = c(i18n$t("Active"),i18n$t("Recovered"), i18n$t("Deaths")),
       values = c("Headcount_Recovered" = "orange",
                  #"white" = "white",
                  "Headcount_Deaths" = "black"
@@ -166,9 +171,9 @@ output$test <- renderPlot({
     )
 
  # gg<-gg + ggtitle("Real time dashboard for tracking the current Global Covid-19 Epidemic") 
-  gg<-gg+ labs(title = "Real time dashboard for tracking the current Global Covid-19 Epidemic",
-               subtitle = "19 Covid Worldwide Cases Breakdown",
-               caption = "Source: 19 Covid database from various sources" )
+  gg<-gg+ labs(title = i18n$t("Real time dashboard for tracking the current Global Covid-19 Epidemic"),
+               subtitle = i18n$t("19 Covid Worldwide Cases Breakdown"),
+               caption = i18n$t("Source: 19 Covid database from various sources") )
   gg <- gg + scale_size(name="Confirmed Cases"#,trans='identity'
                         ,breaks = c(10,100,500,1000,10000,20000,30000,50000,70000,80000),
                         , labels =  c("10","100","500","1000","10000","20000","30000","50000","70000","80000")
@@ -202,13 +207,13 @@ output$COVID_19_timeseries <- renderPlot({
     summarise_at(vars(Headcount_Recovered,Headcount_active,Headcount_Confirmed,Headcount_Deaths),funs(sum(.,na.rm=TRUE)))
   
   gg <-  ggplot(all_19_covid_line, aes(x=as.Date(date))) 
-    gg<-gg+geom_line(aes(y=Headcount_Recovered, col="Recovered"), size = 2)  
-    gg<-gg+geom_line(aes(y=Headcount_active, col="Active"), size = 2) 
-      gg<-gg+geom_line(aes(y=Headcount_Confirmed, col="_Confirmed"), size = 1)  
-    gg<-gg+geom_line(aes(y=Headcount_Deaths, col="Deaths"), size = 1) 
+    gg<-gg+geom_line(aes(y=Headcount_Recovered, col=i18n$t("Recovered")), size = 2)  
+    gg<-gg+geom_line(aes(y=Headcount_active, col=i18n$t("Active")), size = 2) 
+      gg<-gg+geom_line(aes(y=Headcount_Confirmed, col=i18n$t("Confirmed")), size = 1)  
+    gg<-gg+geom_line(aes(y=Headcount_Deaths, col=i18n$t("Deaths")), size = 1) 
     gg<-gg+scale_x_date(breaks = '1 week')  
-    gg<-gg+xlab("Date") 
-    gg<-gg+ ylab("Number of People")
+    gg<-gg+xlab(i18n$t("Date")) 
+    gg<-gg+ ylab(i18n$t("Number of People"))
       gg<-gg+ scale_color_manual(name="", 
                        values = c("#e82507", "#E7B800","#0a0a0a","#22d606")) 
   gg<-gg+theme(panel.grid.minor = element_blank()) 
@@ -234,7 +239,7 @@ output$Cumulative_COVID_19 <- renderPlot({
   gg2 <-gg2+ geom_bar(stat = "identity", position = 'stack'#， position = 'dodge'
   )+scale_fill_manual(values=qualitative)+theme_tufte(ticks = FALSE)+scale_x_date(breaks = '1 week')
   gg2 <-gg2#+ggtitle("Cumulative COVID-19 number")
-  gg2 <-gg2+ xlab("Date") + ylab("Number of People")
+  gg2 <-gg2+ xlab(i18n$t("Date")) + ylab(i18n$t("Number of People"))
   gg2<-gg2+theme(panel.grid.minor = element_blank()) 
   gg2
   #+ scale_fill_brewer(palette = sequential)
@@ -270,16 +275,16 @@ output$COVID_19_timeseries_World_China <- renderPlot({
   
   
  gg<- ggplot(all_19_covid_line2, aes(x=as.Date(date))) 
-  gg<-gg+  geom_line(aes(y=Confirmed_china, col="Total Confirmed Mainland China"), size = 1.5) 
-    gg<-gg+  geom_line(aes(y=Confirmed_outsidechina, col="Total Confirmed Outside Mainland China"), size = 1.5) 
-    gg<-gg+  geom_line(aes(y=Headcount_active, col="Active Worldwide"), size = 1.5) 
-    gg<-gg+  geom_line(aes(y=Headcount_Recovered, col="Total Recovered Worldwide"), size = 1.5) 
+  gg<-gg+  geom_line(aes(y=Confirmed_china, col=i18n$t("Total Confirmed Mainland China")), size = 1.5) 
+    gg<-gg+  geom_line(aes(y=Confirmed_outsidechina, col=i18n$t("Total Confirmed Outside Mainland China")), size = 1.5) 
+    gg<-gg+  geom_line(aes(y=Headcount_active, col=i18n$t("Active Worldwide")), size = 1.5) 
+    gg<-gg+  geom_line(aes(y=Headcount_Recovered, col=i18n$t("Total Recovered Worldwide")), size = 1.5) 
     #ggtitle("COVID-19 timeseries Worldwide & Mainland China") 
-    gg<-gg+  xlab("Date") + ylab("Number of People")
+    gg<-gg+  xlab(i18n$t("Date")) + ylab(i18n$t("Number of People"))
     gg<-gg+ scale_x_date(breaks = '1 week') 
     gg<-gg+ scale_color_manual(name="", 
                        values = brewer.pal(4, "PRGn")) 
-  gg<-gg+theme(panel.grid.minor = element_blank())
+  gg<-gg+theme(panel.grid.minor = element_blank(),legend.position="bottom")
   gg
   
 })
@@ -311,16 +316,16 @@ output$COVID_19_timeseries_World_China_log <- renderPlot({
   
   
  gg<- ggplot(all_19_covid_line2, aes(x=as.Date(date))) 
-   gg<- gg+   geom_line(aes(y=log(Confirmed_china), col="Total Confirmed Mainland China"), size = 1.5) 
-   gg<- gg+ geom_line(aes(y=log(Confirmed_outsidechina), col="Total Confirmed Outside Mainland China"), size = 1.5) 
-     gg<- gg+  geom_line(aes(y=log(Headcount_active), col="Active Worldwide"), size = 1.5) 
-     gg<- gg+  geom_line(aes(y=log(Headcount_Recovered), col="Total Recovered Worldwide"), size = 1.5) 
+   gg<- gg+   geom_line(aes(y=log(Confirmed_china), col=i18n$t("Total Confirmed Mainland China")), size = 1.5) 
+   gg<- gg+ geom_line(aes(y=log(Confirmed_outsidechina), col=i18n$t("Total Confirmed Outside Mainland China")), size = 1.5) 
+     gg<- gg+  geom_line(aes(y=log(Headcount_active), col=i18n$t("Active Worldwide")), size = 1.5) 
+     gg<- gg+  geom_line(aes(y=log(Headcount_Recovered), col=i18n$t("Total Recovered Worldwide")), size = 1.5) 
     #ggtitle("COVID-19 timeseries Worldwide & Mainland China log") 
-     gg<- gg+   xlab("Date") + ylab("Number of People")
+     gg<- gg+   xlab(i18n$t("Date")) + ylab(i18n$t("Number of People"))
      gg<- gg+  scale_x_date(breaks = '1 week') 
      gg<- gg+   scale_color_manual(name="", 
                        values = brewer.pal(4, "PRGn")) 
-   gg<- gg+  theme(panel.grid.minor = element_blank()) 
+   gg<- gg+  theme(panel.grid.minor = element_blank(),legend.position="bottom") 
   gg
 })
 
