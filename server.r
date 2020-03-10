@@ -12,6 +12,7 @@
 ######################################################################################
 ######################################################################################
 
+
 # This is the server logic for a Shiny web application.
 # You can find out more about building applications with Shiny here:
 #
@@ -42,7 +43,7 @@ library(shiny.i18n)
 i18n <- Translator$new(translation_json_path = "./translation.json")
 i18n$set_translation_language("cn")
 
-  
+
 test_19_covid_Confirmed<-reshape2::melt(time_series_19_covid_Confirmed,id.vars=c("Province.State","Country.Region","Lat","Long"),
                                                   variable.name = "Calendar_Date"
                                                   ,value.name = "Headcount_Confirmed"
