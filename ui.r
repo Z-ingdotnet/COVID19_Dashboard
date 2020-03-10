@@ -13,7 +13,7 @@ library(repmis)
 library(scatterpie)
 library(RColorBrewer)
 library(shiny.i18n)
-
+ 
 i18n <- Translator$new(translation_json_path = "./translation.json")
 i18n$set_translation_language("cn")
 
