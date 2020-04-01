@@ -1,0 +1,100 @@
+{
+  "languages": ["en", "cn"],
+  "translation": [
+      {"en": "Real time dashboard for tracking the current Global Covid-19 Pandemic", "cn": "新冠肺炎全球大流行实时监控"},
+      {"en": "RCovid-19 Tracker", "cn": "新冠肺炎监控"},
+      {"en": "Dashboard", "cn": "可视化版面"},
+
+      {
+        "en": "Contact-me",
+        "cn": "联系我"
+      },
+      {
+        "en": "Cumulative COVID-19 number",
+        "cn": "新冠肺炎累计确诊"
+      },
+      {
+        "en": "Date",
+        "cn": "日期"
+      },
+       {
+        "en": "19 Covid Worldwide Cases Breakdown",
+        "cn": "新冠肺炎全球分部"
+      },
+       {
+        "en": "Source: 19 Covid database from various sources",
+        "cn": "数据来源：不同数据源"
+      },
+        {
+        "en": "COVID-19 time series Worldwide & Mainland China",
+        "cn": "COVID-19 时间序列数据 全球&中国大陆"
+      },  
+      {
+        "en": "COVID-19 time series Worldwide & Mainland China(logarithmic)",
+        "cn": "COVID-19 时间序列数据 全球&中国大陆 (logarithmic)"
+      },
+
+       {
+        "en": "Total Confirmed Mainland China",
+        "cn": "中国大陆累计确诊"
+      },
+       {
+        "en": "Total Confirmed Outside Mainland China",
+        "cn": "中国大陆以外累计确诊"
+      },
+       {
+        "en": "Active Worldwide",
+        "cn": "世界现有确诊"
+      },
+   {
+        "en": "Date input: yyyy-mm-dd",
+        "cn": "请选择日期"
+      },
+
+       {
+        "en": "Total Recovered Worldwide",
+        "cn": "累计康复"
+      },
+       {
+        "en": "Number of People",
+        "cn": "总人数"
+      },
+      {
+        "en": "Confirmed",
+        "cn": "累计确诊"
+      },
+
+      {
+        "en": "Active",
+        "cn": "现有确诊"
+      },
+       {
+        "en": "Recovered",
+        "cn": "累计康复"
+      },
+       {
+        "en": "Deaths",
+        "cn": "累计不治"
+      },
+      {
+        "en": "Total Confirmed",
+        "cn": "累计确诊"
+      },
+      {
+        "en": "Currently Active",
+        "cn": "现有确诊"
+      },
+      {
+        "en": "Total Recovered",
+        "cn": "累计康复"
+      },
+      {
+        "en": "Total Deaths",
+        "cn": "累计不治"
+      },
+      {
+        "en": "COVID-19 time series",
+        "cn": "COVID-19 时间序列"
+      }
+    ]
+}
