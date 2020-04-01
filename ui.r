@@ -1,8 +1,10 @@
+
+
 library(readr)
 library(reshape2)
 library(lubridate)
 library(rgdal)
-library(shiny)
+library(shiny) 
 library(shinydashboard)
 library(maptools)
 library(ggplot2)
@@ -13,9 +15,13 @@ library(repmis)
 library(scatterpie)
 library(RColorBrewer)
 library(shiny.i18n)
- 
+library(showtext)
+library(waiter)
+
+showtext_auto()
+
 i18n <- Translator$new(translation_json_path = "./translation.json")
-i18n$set_translation_language("cn")
+i18n$set_translation_language("en")
 
 
 test_19_covid_Confirmed<-reshape2::melt(time_series_19_covid_Confirmed,id.vars=c("Province.State","Country.Region","Lat","Long"),
@@ -47,9 +53,15 @@ all_19_covid<- merge(all_19_covid0,test_19_covid_Deaths,by=c("Province.State","C
 all_19_covid$Headcount_active<-all_19_covid$Headcount_Confirmed-all_19_covid$Headcount_Recovered-all_19_covid$Headcount_Deaths
 
 
+all_19_covid[is.na(all_19_covid)] <- 0
 
 
-header <- dashboardHeader(title = i18n$t("Real time dashboard for tracking the current Global Covid-19 Epidemic"))  
+
+header <- dashboardHeader(title = i18n$t("Covid-19 Tracker")
+                         # ,tags$li(class = "dropdown",   radioButtons(inputId = "language", label = "Select Language",
+                          #                       choices = c("en" = "en", "cn" = "cn"),
+                         #                        selected = "en"))
+                          )  
 
 
 
@@ -65,18 +77,62 @@ sidebar <- dashboardSidebar(
 
 
 
+
 frow1 <- fluidRow(
+  
+  uiOutput('page_content'),
+ #column(3, radioButtons(inputId = "language", label = "Select Language",
+  #                       choices = c("English" = "en", "Chinese" = "cn"),
+ #                        selected = "en")),
+  
 
   
   column(3, 
     dateInput(i18n$t('date'),
               label = i18n$t('Date input: yyyy-mm-dd'),
               value = max(all_19_covid$date)
+              , min = min(all_19_covid$date),max = max(all_19_covid$date)
     )
   )
 
   )
   
+
+frow0<-fluidRow(
+  # A static valueBox
+  valueBox(floor(all_19_covid %>% 
+             filter( 
+               date.x >=max(date.x))  %>%
+             summarise(sum(Headcount_Confirmed))), i18n$t("Total Confirmed"), icon = icon("ambulance"),color="yellow",width = 3),
+  
+  valueBox(
+    
+    floor(all_19_covid %>% 
+      filter( 
+        date.x >=max(date.x))  %>%
+      summarise(sum(Headcount_active)))
+    
+    , i18n$t("Currently Active"), icon = icon("hospital"),color="red",width = 3),
+  
+  valueBox(all_19_covid %>% 
+             filter( 
+               date >=max(date))  %>%
+             summarise(sum(Headcount_Recovered)), i18n$t("Total Recovered"), icon = icon("first-aid"),color="green",width = 3),
+  
+  valueBox(floor(all_19_covid %>% 
+             filter( 
+               date.x >=max(date.x))  %>%
+             summarise(sum(Headcount_Deaths))), i18n$t("Total Deaths"), icon = icon("diagnoses"),color="black",width = 3) 
+)
+
+
+#frow1111 <- fluidRow(
+#  valueBoxOutput("value1")
+#  ,valueBoxOutput("value2")
+#  ,valueBoxOutput("value3")
+#)
+
+
   frow11 <- fluidRow(
     box(
       title = i18n$t("Cumulative COVID-19 number"),
@@ -127,12 +183,17 @@ frow1 <- fluidRow(
     plotOutput("test",  height = "1000px")
   )
   
+
+
   
-  
-  
-  body <- dashboardBody(frow1,frow2,frow11
+  body <- dashboardBody(   
+                           tags$head( tags$meta(name = "viewport", content = "width=1600"),  
+                                   uiOutput("body")),frow1,frow0,frow2,frow11
+                        
+                           
   )
   
-  ui <- dashboardPage(title = i18n$t('Real time dashboard for tracking the current Global Covid-19 Epidemic'), header, sidebar, body, skin='red')
+  ui <- dashboardPage(title = i18n$t('Real time dashboard for tracking the current Global Covid-19 Epidemic'), header, sidebar,
+                      body, skin='red')
   
   
