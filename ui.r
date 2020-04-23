@@ -23,6 +23,11 @@ showtext_auto()
 i18n <- Translator$new(translation_json_path = "./translation.json")
 i18n$set_translation_language("en")
 
+translator <- Translator$new(translation_json_path = "./translation.json")
+
+
+
+
 
 test_19_covid_Confirmed<-reshape2::melt(time_series_19_covid_Confirmed,id.vars=c("Province.State","Country.Region","Lat","Long"),
                                         variable.name = "Calendar_Date", 
@@ -180,15 +185,26 @@ frow0<-fluidRow(
     #    ,collapsible = TRUE 
     #    ,plotOutput("test", height = "1500px",width = 4)
     #  )
-    plotOutput("test",  height = "1000px")
+    plotOutput("test",  height = "500px")
   )
   
-
+  frow3 <- fluidRow(
+    
+   #   box(
+    #    title = i18n$t("WHO Timeline - COVID-19"),
+   #     color = "blue",
+   #     ribbon = TRUE,
+   #     collapsible = TRUE,
+    #    width = 10,
+    plotOutput("WHOTimeline",  height = "500px")
+    #  )
+  )
+  
 
   
   body <- dashboardBody(   
                            tags$head( tags$meta(name = "viewport", content = "width=1600"),  
-                                   uiOutput("body")),frow1,frow0,frow2,frow11
+                                   uiOutput("body")),frow1,frow0,frow2,frow3,frow11
                         
                            
   )
