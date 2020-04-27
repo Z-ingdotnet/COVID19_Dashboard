@@ -14,13 +14,6 @@
 
 
 
-# This is the server logic for a Shiny web application.
-# You can find out more about building applications with Shiny here:
-#
-# http://shiny.rstudio.com
-#
-
-
 shinyServer(function(input, output) {
 
 
@@ -50,14 +43,6 @@ showtext_auto()
 
 translator <- Translator$new(translation_json_path = "./translation.json")
 
-
-i18n <- reactive({
-  selected <- input$selected_language
-  if (length(selected) > 0 && selected %in% translator$languages) {
-    translator$set_translation_language(selected)
-  }
-  translator
-})
 
 
 
